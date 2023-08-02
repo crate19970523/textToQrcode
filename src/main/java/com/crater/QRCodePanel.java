@@ -5,10 +5,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -31,11 +31,10 @@ public class QRCodePanel extends JPanel {
     public static void main(String[] args) throws WriterException, IOException {
         String text = args[0];
         if (checkIsFile(text)) {
-            text = readFile(text);
+            text = readFile(args[1]);
         }
         int width = 500;
         int height = 500;
-        String format = "png";
         HashMap<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BitMatrix bitMatrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, width, height, hints);
@@ -47,15 +46,15 @@ public class QRCodePanel extends JPanel {
         }
         JFrame frame = new JFrame();
         frame.getContentPane().add(new QRCodePanel(image));
-        frame.pack();
+        frame.setSize(600, 600);
         frame.setVisible(true);
     }
 
-    private static boolean checkIsFile(String args) {
-        return args.matches(".*text");
+    private static boolean checkIsFile(String args0) {
+        return "-f".equals(args0);
     }
 
-    private static String readFile (String path) throws IOException {
+    private static String readFile(String path) throws IOException {
         return Files.readString(Path.of(path));
     }
 }
